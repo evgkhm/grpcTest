@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  grpc_test_app:
+    container_name: grpc_test_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    command: ./grpcTestApp
+    ports:
+      - "8888:8888"
+      - "50051:50051"
+    environment:
+      - CONFIG_PATH=/go/internal/config/config.yaml

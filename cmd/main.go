@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"golang.org/x/sync/errgroup"
-	"grpcTest/internal/config/config"
+	"grpcTest/internal/config"
 	"grpcTest/internal/controller/grpc"
 	"grpcTest/internal/usecase"
 	"grpcTest/pkg/logging"
