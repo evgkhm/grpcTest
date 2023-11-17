@@ -1,0 +1,103 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "grpc_test_app_service.proto",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "GrpcTestAppService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/itn/{itn}": {
+      "get": {
+        "operationId": "GrpcTestAppService_GetItnInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/grpcTestGetItnResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "itn",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "GrpcTestAppService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "grpcTestGetItnResponse": {
+      "type": "object",
+      "properties": {
+        "itn": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "kpp": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "nameCompany": {
+          "type": "string"
+        },
+        "nameLeader": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
