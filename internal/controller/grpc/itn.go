@@ -6,8 +6,6 @@ import (
 )
 
 func (s *Service) GetItnInfo(ctx context.Context, req *spec.GetItnRequest) (*spec.GetItnResponse, error) {
-	//itnDTO := entity.DTO{Itn: req.Itn}
-
 	inputItn := req.Itn
 	itnDTO, err := s.useCase.GetItnInfo(ctx, inputItn)
 	if err != nil {
@@ -19,5 +17,6 @@ func (s *Service) GetItnInfo(ctx context.Context, req *spec.GetItnRequest) (*spe
 		Kpp:         itnDTO.Kpp,
 		NameCompany: itnDTO.NameCompany,
 		NameLeader:  itnDTO.NameLeader,
-		Success:     true}, nil
+		Success:     true,
+	}, nil
 }

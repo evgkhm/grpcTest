@@ -26,6 +26,13 @@ func NewItnUseCase(logger *slog.Logger) *ItnUseCase {
 	}
 }
 
+// GetItnInfo retrieves the information of an ITN.
+//
+// It takes the following parameters:
+// - ctx: the context.Context object for handling deadlines and cancellations.
+// - inputItn: the ID of the ITN to retrieve information for.
+//
+// It returns a pointer to a DTO object and an error.
 func (i *ItnUseCase) GetItnInfo(ctx context.Context, inputItn uint64) (*entity.DTO, error) {
 	doc, err := makeReq(ctx, inputItn)
 	if err != nil {
@@ -48,6 +55,10 @@ func (i *ItnUseCase) GetItnInfo(ctx context.Context, inputItn uint64) (*entity.D
 	return dto, nil
 }
 
+// checkDoc checks the given goquery.Document for the presence of the text "результаты поиска" in the title tag.
+//
+// It takes a pointer to a goquery.Document as a parameter.
+// It does not return any value.
 func checkDoc(doc *goquery.Document) error {
 	doc.Find("title").EachWithBreak(func(i int, s *goquery.Selection) bool {
 		if strings.Contains(s.Text(), "результаты поиска") == true {
@@ -58,6 +69,10 @@ func checkDoc(doc *goquery.Document) error {
 	return nil
 }
 
+// makeReq retrieves a goquery.Document from a URL based on the input ITN.
+//
+// It takes a context.Context and an unsigned 64-bit integer as its parameters.
+// It returns a pointer to a goquery.Document and an error.
 func makeReq(ctx context.Context, inputItn uint64) (*goquery.Document, error) {
 	url := "https://www.rusprofile.ru/search?query="
 	itnStr := strconv.Itoa(int(inputItn))
@@ -81,6 +96,10 @@ func makeReq(ctx context.Context, inputItn uint64) (*goquery.Document, error) {
 	return doc, err
 }
 
+// parseDoc parses the given goquery.Document and returns a DTO and an error.
+//
+// It takes a *goquery.Document as a parameter and searches for specific elements within it. It populates a DTO struct with the found values and returns it along with an error.
+// The function returns *entity.DTO and an error.
 func parseDoc(doc *goquery.Document) (*entity.DTO, error) {
 	var companyDTO entity.DTO
 	doc.Find("span").EachWithBreak(func(index int, item *goquery.Selection) bool {
