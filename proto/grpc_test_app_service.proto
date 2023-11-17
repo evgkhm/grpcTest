@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package grpcTest;
+option go_package = "./internal/controller/grpc/spec";
+import "google/api/annotations.proto";
+import "grpc_test_app.proto";
+
+service GrpcTestAppService {
+  rpc GetItnInfo(GetItnRequest) returns (GetItnResponse) {
+    option (google.api.http) = {
+      get: "/itn/{itn}"
+    };
+  };
+}

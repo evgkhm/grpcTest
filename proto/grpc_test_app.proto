@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package grpcTest;
+option go_package = "./internal/controller/grpc/spec";
+
+message GetItnRequest {
+  uint64 itn = 1;
+}
+
+//message GetItnResponse {
+//  uint32 itn = 1;
+//  uint32 kpp = 2;
+//  string nameCompany = 3;
+//  string nameLeader = 4;
+//  bool success = 5;
+//}
+
+message GetItnResponse {
+  uint64 itn = 1;
+  uint64 kpp = 2;
+  string nameCompany = 3;
+  string nameLeader = 4;
+  bool success = 5;
+}
