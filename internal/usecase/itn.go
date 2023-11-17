@@ -20,29 +20,35 @@ type ItnUseCase struct {
 	logger *slog.Logger
 }
 
-func (i *ItnUseCase) GetItnInfo(ctx context.Context, dto *entity.DTO) error {
-	doc, err := makeReq(ctx, dto)
-	if err != nil {
-		i.logger.Error("GetItnInfo - makeReq", err)
-		return err
+func NewItnUseCase(logger *slog.Logger) *ItnUseCase {
+	return &ItnUseCase{
+		logger: logger,
 	}
-
-	err = checkDoc(doc, dto)
-	if err != nil {
-		i.logger.Error("GetItnInfo - checkDoc", err)
-		return err
-	}
-
-	err = parseDoc(doc, dto)
-	if err != nil {
-		i.logger.Error("GetItnInfo - parseDoc", err)
-		return err
-	}
-
-	return nil
 }
 
-func checkDoc(doc *goquery.Document, dto *entity.DTO) error {
+func (i *ItnUseCase) GetItnInfo(ctx context.Context, inputItn uint64) (*entity.DTO, error) {
+	doc, err := makeReq(ctx, inputItn)
+	if err != nil {
+		i.logger.Error("GetItnInfo - makeReq", err)
+		return nil, err
+	}
+
+	err = checkDoc(doc)
+	if err != nil {
+		i.logger.Error("GetItnInfo - checkDoc", err)
+		return nil, err
+	}
+
+	dto, parseErr := parseDoc(doc)
+	if parseErr != nil {
+		i.logger.Error("GetItnInfo - parseDoc", err)
+		return nil, parseErr
+	}
+
+	return dto, nil
+}
+
+func checkDoc(doc *goquery.Document) error {
 	doc.Find("title").EachWithBreak(func(i int, s *goquery.Selection) bool {
 		if strings.Contains(s.Text(), "результаты поиска") == true {
 			return false
@@ -52,9 +58,9 @@ func checkDoc(doc *goquery.Document, dto *entity.DTO) error {
 	return nil
 }
 
-func makeReq(ctx context.Context, dto *entity.DTO) (*goquery.Document, error) {
+func makeReq(ctx context.Context, inputItn uint64) (*goquery.Document, error) {
 	url := "https://www.rusprofile.ru/search?query="
-	itnStr := strconv.Itoa(int(dto.Itn))
+	itnStr := strconv.Itoa(int(inputItn))
 
 	req, err := http.Get(url + itnStr)
 	if err != nil {
@@ -75,7 +81,8 @@ func makeReq(ctx context.Context, dto *entity.DTO) (*goquery.Document, error) {
 	return doc, err
 }
 
-func parseDoc(doc *goquery.Document, companyDTO *entity.DTO) error {
+func parseDoc(doc *goquery.Document) (*entity.DTO, error) {
+	var companyDTO entity.DTO
 	doc.Find("span").EachWithBreak(func(index int, item *goquery.Selection) bool {
 		val, ok := item.Attr("id")
 		if ok && val == "clip_inn" {
@@ -91,7 +98,7 @@ func parseDoc(doc *goquery.Document, companyDTO *entity.DTO) error {
 	})
 
 	if companyDTO.Itn == 0 {
-		return ErrItnNotFound
+		return nil, ErrItnNotFound
 	}
 
 	doc.Find("span").EachWithBreak(func(index int, item *goquery.Selection) bool {
@@ -129,11 +136,5 @@ func parseDoc(doc *goquery.Document, companyDTO *entity.DTO) error {
 		return true
 	})
 
-	return nil
-}
-
-func NewItnUseCase(logger *slog.Logger) *ItnUseCase {
-	return &ItnUseCase{
-		logger: logger,
-	}
+	return &companyDTO, nil
 }

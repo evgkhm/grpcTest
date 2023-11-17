@@ -11,7 +11,7 @@ type UseCase struct {
 }
 
 type Itn interface {
-	GetItnInfo(ctx context.Context, dto *entity.DTO) error
+	GetItnInfo(ctx context.Context, inputItn uint64) (*entity.DTO, error)
 }
 
 func New(logger *slog.Logger) *UseCase {
